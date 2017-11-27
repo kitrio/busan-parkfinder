@@ -15,9 +15,9 @@ class MainTableViewController:UIViewController,UITableViewDataSource,UITableView
     
     let endUrl = "http://opendata.busan.go.kr/openapi/service/CityPark/getCityParkInfoList"
     let detailUrl = "http://opendata.busan.go.kr/openapi/service/CityPark/getCityParkInfoDetail"
-    let numOfRow = 1
+    //let numOfRow = 1
     //let pageSizeNo = 10
-    let totalCount = 388
+    var totalCount = 0
     var item : [String:String] = [:]
     var items : [[String:String]] = []
     var keyElement = ""
@@ -28,7 +28,7 @@ class MainTableViewController:UIViewController,UITableViewDataSource,UITableView
         
         MainTableView.delegate = self
         MainTableView.dataSource = self
-        getList()
+        getTotal(numOfRow : totalCount)
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -39,14 +39,15 @@ class MainTableViewController:UIViewController,UITableViewDataSource,UITableView
         
     }
 
-    func getList(){
+    func getTotal(numOfRow: Int){
         
-        let strUrl = "\(endUrl)?serviceKey=\(apikey)&numberOfRows=\(numOfRow)&totalCount=\(totalCount)"
+        let strUrl = "\(endUrl)?serviceKey=\(apikey)&numOfRows=\(numOfRow)&totalCount=\(totalCount)"
         if let url = URL(string: strUrl){
             if let parser = XMLParser(contentsOf: url){
                 parser.delegate = self
                 let success = parser.parse()
                 if success{
+                    print(strUrl)
                     print("parsing success")
                 }else {
                     print("parsing failed")
@@ -82,7 +83,18 @@ class MainTableViewController:UIViewController,UITableViewDataSource,UITableView
         }
     }
     func parser(_ parser: XMLParser, foundCharacters foundstring: String) {
-        item[keyElement] = foundstring.trimmingCharacters(in: .whitespaces)
+        if item[keyElement] == nil{
+            
+            item[keyElement] = foundstring.trimmingCharacters(in: .whitespaces)
+            
+            if keyElement == "totalCount"{
+                totalCount = Int(foundstring.trimmingCharacters(in: .whitespaces))!
+            }
+            print("keyisnil\(item)")
+            
+            
+        }
+        
     }
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "item" {

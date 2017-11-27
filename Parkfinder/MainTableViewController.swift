@@ -41,7 +41,7 @@ class MainTableViewController:UIViewController,UITableViewDataSource,UITableView
 
     func getList(){
         
-        let strUrl = "\(endUrl)?serviceKey=\(apikey)&numberOfRows=\(totalCount)&totalCount=\(totalCount)"
+        let strUrl = "\(endUrl)?serviceKey=\(apikey)&numberOfRows=\(numOfRow)&totalCount=\(totalCount)"
         if let url = URL(string: strUrl){
             if let parser = XMLParser(contentsOf: url){
                 parser.delegate = self
